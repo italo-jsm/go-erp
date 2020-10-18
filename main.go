@@ -1,7 +1,6 @@
 package main
 
 import (
-	"sync"
 	"github.com/italosm/go-erp/model"
 	"encoding/json"
 	"fmt"
@@ -10,18 +9,15 @@ import (
 )
 
 func main(){
-	wg := &sync.WaitGroup{}
 	ch := make(chan model.Product)
-	wg.Add(1)
-	go getProducts(wg, ch)
+	go getProducts(ch)
 	fmt.Println("Started get products")
 	for product := range ch{
 		fmt.Println(product.Description)
 	}
-	wg.Wait()
 }
 
-func getProducts(wg *sync.WaitGroup, channel chan <- model.Product){
+func getProducts(channel chan <- model.Product){
 	response, err := http.Get("http://localhost:8080/products")
 	if(err != nil){
 		panic(err.Error())
@@ -34,5 +30,4 @@ func getProducts(wg *sync.WaitGroup, channel chan <- model.Product){
 		channel <- products[i]
 	}
 	close(channel)
-	wg.Done()
 }
