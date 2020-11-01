@@ -12,6 +12,6 @@ func CreateRoutes() *mux.Router{
 	router := mux.NewRouter().StrictSlash(true)
 	productController := new(controllers.ProductController)
 	router.Handle("/products", middlewares.ProductsMiddlewareHandler(http.HandlerFunc(productController.GetAllProducts))).Methods("GET")
-	router.Handle("/products/cost", middlewares.ProductsMiddlewareHandler(http.HandlerFunc(productController.GetProductBySaleCost))).Methods("GET")
+	router.Handle("/products/cost", middlewares.ProductsMiddlewareHandler(http.HandlerFunc(productController.GetProductBySaleCost))).Queries("saleCost", "{saleCost}").Methods("GET")
 	return router
 }
