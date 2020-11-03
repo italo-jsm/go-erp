@@ -26,14 +26,14 @@ func GetProductBySaleCost(saleCost int) []model.Product{
 	if(error != nil){
 		log.Fatal(error.Error())
 	}
-	var products []model.Product
+	var products []model.Product = []model.Product{}
 	cursor.All(context.TODO(), &products)
 	return products
 }
 
 //GetAllProducts gets all products 
 func GetAllProducts() []model.Product{
-	var products []model.Product
+	var products []model.Product = []model.Product{}
 	client, _ := database.ConnectDatabase()
 	collection := client.Database("my_database").Collection("products")
 	cursor, error := collection.Find(context.TODO(), bson.M{})
