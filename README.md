@@ -1,2 +1,3 @@
-# Simple ERP Application for golang studies
-## Using golang with MongoDB NoSQL database
+# Simple ERP Application
+## Used for Golang studing purposes
+### Uses MongoDB NoSQL database
