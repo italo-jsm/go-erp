@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"crypto/sha256"
+	"crypto/sha512"
+	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
-
 	"github.com/italosm/go-erp/crypto"
 )
 
@@ -25,9 +26,26 @@ func (loginController *LoginController) AttemptAuthentication(w http.ResponseWri
 
 	json.Unmarshal(reqBody, &credential)
 
+	w.Write([]byte(generateToken(credential)))
+}
+
+func generateToken(credential crypto.Credential) string{
+
+	var header crypto.Header
+	header.Alg = "HS512"
+	header.Type = "JWT"
+
 	var token crypto.Token
 	token.IssuedAt = time.Now()
 	token.Role = "admin"
 	token.Username = credential.Username
-	result, _ := json.Marshal(token)
+
+	headerJson, _ := json.Marshal(header)
+
+	tokenJson, _ := json.Marshal(token)
+
+	headerPlusTokenString := strings.Join([]string{base64.StdEncoding.EncodeToString(headerJson), base64.StdEncoding.EncodeToString(tokenJson)}, ".")
+
+	signature := base64.StdEncoding.EncodeToString(sha512.New().Sum([]byte(strings.Join([]string{headerPlusTokenString, "mykey"}, ""))))
+	return strings.Join([]string{headerPlusTokenString, signature}, ".")
 }
